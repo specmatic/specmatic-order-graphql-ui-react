@@ -5,15 +5,33 @@ import ProductForm from "../components/ProductForm";
 import { ApolloProvider } from "@apollo/client";
 import client from "../apolloClient";
 import FindAvailableProductForm from "../components/FindAvailableProductForm";
-import { startGraphQlStub, stopGraphQlStub } from "specmatic";
 import FindOffersForDate from "../components/FindOffersForDate";
 import FindOffersAndProducts from "../components/FindOffersAndProducts";
+import { GenericContainer, Wait } from "testcontainers";
+import path from "path";
 
+// @ts-ignore
 global.setImmediate = global.setImmediate || ((fn, ...args) => global.setTimeout(fn, 0, ...args));
-let stub;
+/**
+ * @type {import("testcontainers").StartedTestContainer}
+ */
+let graphQLContainer;
 
 beforeAll(async () => {
-  stub = await startGraphQlStub("127.0.0.1", 8080);
+  graphQLContainer = await new GenericContainer("specmatic/specmatic-graphql")
+    .withBindMounts([
+      { source: path.resolve("specmatic.yml"), target: "/usr/src/app/specmatic.yml" },
+      { source: path.resolve("graphql_examples"), target: "/usr/src/app/examples" }
+    ])
+    .withCommand(["virtualize", "--port", "8080", "--examples", "/usr/src/app/examples"])
+    .withExposedPorts({ host: 8080, container: 8080 })
+    .withLogConsumer(stream => {
+      stream.on("data", process.stdout.write.bind(process.stdout));
+      stream.on("err", process.stderr.write.bind(process.stderr));
+      stream.on("end", () => process.stdout.write("GraphQL mock stopped"));
+    })
+    .withWaitStrategy(Wait.forLogMessage(/Stub server is running/i))
+    .start();
 }, 20000);
 
 jest.setTimeout(10000);
@@ -54,9 +72,16 @@ describe("App component tests", () => {
     }, { timeout: ALLOWED_WAIT_TIME_FOR_RESPONSE });
 
     // Optionally, check if the form is cleared
-    expect(screen.getByTestId("name").value).toBe("");
-    expect(screen.getByTestId("inventory").value).toBe("");
-    expect(screen.getByTestId("type").value).toBe("gadget");
+    /**@type {HTMLInputElement} */
+    const nameInput = screen.getByTestId("name");
+    /**@type {HTMLInputElement} */
+    const inventoryInput = screen.getByTestId("inventory");
+    /**@type {HTMLInputElement} */
+    const typeInput = screen.getByTestId("type");
+
+    expect(nameInput.value).toBe("");
+    expect(inventoryInput.value).toBe("");
+    expect(typeInput.value).toBe("gadget");
   });
 
   test("should fetch available products", async () => {
@@ -90,10 +115,10 @@ describe("App component tests", () => {
     fireEvent.click(screen.getByTestId("submit"));
 
     await waitFor(() => {
-      expect(screen.getByText("WKND30")).toBeInTheDocument(); 
-      expect(screen.getByText("12/12/2024")).toBeInTheDocument(); 
-      expect(screen.getByText("SUNDAY20")).toBeInTheDocument(); 
-      expect(screen.getByText("12/25/2024")).toBeInTheDocument(); 
+      expect(screen.getByText("WKND30")).toBeInTheDocument();
+      expect(screen.getByText("12/12/2024")).toBeInTheDocument();
+      expect(screen.getByText("SUNDAY20")).toBeInTheDocument();
+      expect(screen.getByText("12/25/2024")).toBeInTheDocument();
     });
   });
 
@@ -122,5 +147,5 @@ describe("App component tests", () => {
 });
 
 afterAll(async () => {
-  await stopGraphQlStub(stub);
+  await graphQLContainer?.stop();
 }, 10000);
