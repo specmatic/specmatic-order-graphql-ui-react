@@ -6,22 +6,16 @@ on:
       - main
 
 jobs:
-    test:
-        strategy:
-          matrix:
-            node-version: [22.x]
-            os: [ubuntu-latest, macos-latest]
-        runs-on: ${{ matrix.os }}
-        steps:
-          - uses: actions/checkout@v4
-          - name: Set up JRE 17
-            uses: actions/setup-java@v4
-            with:
-              distribution: 'temurin' # See 'Supported distributions' for available options
-              java-version: '17'
-              java-package: 'jre'
-          - uses: actions/setup-node@v4
-            with:
-              node-version: ${{ matrix.node-version }}
-          - run: npm install
-          - run: npm run test-ci
+  test:
+    strategy:
+      matrix:
+        node-version: [22.x]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm run test-ci
