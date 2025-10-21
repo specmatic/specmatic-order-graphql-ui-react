@@ -1,5 +1,5 @@
 {
-  "name": "specmatic-order-graphql-ui-reactgit",
+  "name": "specmatic-order-graphql-ui-react",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -23,10 +23,10 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --coverage --detectOpenHandles --forceExit --transformIgnorePatterns \"node_modules/(?!axios)/\"",
+    "test": "react-scripts test --coverage --detectOpenHandles --forceExit --transformIgnorePatterns \"node_modules/(?!axios)/\"  --verbose=true",
     "eject": "react-scripts eject",
     "graphiql": "node graphiql-server.js",
-    "specmatic:stub": "java -jar node_modules/specmatic-commercial/graphql/specmatic-graphql-all.jar virtualize --port 8080 --examples=graphql_examples",
+    "specmatic:stub": "node -e \"require('child_process').execSync('docker run --rm -v ' + process.cwd() + ':/usr/src/app -p 8080:8080 specmatic/specmatic-graphql virtualize --port 8080 --examples=graphql_examples', {stdio: 'inherit'})\"",
     "test-ci": "cross-env SPECMATIC_LOG_LEVEL=debug DEBUG=specmatic-order-graphql-ui-react:* npm run test"
   },
   "eslintConfig": {
@@ -50,8 +50,8 @@
   "devDependencies": {
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.39",
-    "specmatic": "^2.11.3",
-    "specmatic-commercial": "github:znsio/specmatic-node-commercial#f43d6a2f5140c04fbb49c312e17d217aa4e5dce7",
-    "tailwindcss": "^3.4.3"
+    "tailwindcss": "^3.4.3",
+    "@types/jest": "^30.0.0",
+    "testcontainers": "^11.7.0"
   }
 }
