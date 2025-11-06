@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { toast } from "react-toastify";
 import ProductForm from "../components/ProductForm";
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 import client from "../apolloClient";
 import FindAvailableProductForm from "../components/FindAvailableProductForm";
 import FindOffersForDate from "../components/FindOffersForDate";
@@ -21,7 +21,8 @@ beforeAll(async () => {
   graphQLContainer = await new GenericContainer("specmatic/specmatic-graphql")
     .withBindMounts([
       { source: path.resolve("specmatic.yml"), target: "/usr/src/app/specmatic.yml" },
-      { source: path.resolve("graphql_examples"), target: "/usr/src/app/examples" }
+      { source: path.resolve("graphql_examples"), target: "/usr/src/app/examples" },
+      { source: path.resolve("build/reports/specmatic"), target: "/usr/src/app/build/reports/specmatic" }
     ])
     .withCommand(["virtualize", "--port", "8080", "--examples", "/usr/src/app/examples"])
     .withExposedPorts({ host: 8080, container: 8080 })

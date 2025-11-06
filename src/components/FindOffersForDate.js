@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { useLazyQuery, gql } from '@apollo/client';
+import { useState, useEffect } from 'react';
+import { gql } from '@apollo/client';
+import { useLazyQuery } from "@apollo/client/react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -7,29 +8,28 @@ const FindOffersForDate = () => {
   const [date, setDate] = useState('');
   const [offers, setOffers] = useState(null);
 
-  const formatDateString = (dateString) => {
-    return dateString.replace(/-/g, '/'); 
-  };
-  
   const FIND_OFFERS_FOR_DATE = gql`
     query {
-      findOffersForDate(date: "${formatDateString(date)}") {
+      findOffersForDate(date: "${date}") {
         offerCode
         validUntil
       }
     }
   `;
 
-  const [findOffersForDate, { loading }] = useLazyQuery(FIND_OFFERS_FOR_DATE, {
-    fetchPolicy: 'network-only',
-    onCompleted: (data) => {
-      setOffers(data.findOffersForDate);
-    },
-    onError: () => {
-      setOffers(null);
-      toast.error('Error fetching offers');
-    },
-  });
+  const [findOffersForDate, { loading, data, error }] = useLazyQuery(FIND_OFFERS_FOR_DATE, {fetchPolicy: 'network-only'});
+
+  useEffect(() => {
+    const offers = data?.findOffersForDate || [];
+    setOffers(offers);
+  }, [data]);
+
+  useEffect(() => {
+    if (!error) return;
+    setOffers(null);
+    toast.error('Encountered error executing the findOffersForDate query');
+    return () => toast.dismiss();
+  }, [error]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,22 +40,22 @@ const FindOffersForDate = () => {
       return;
     }
     
-    findOffersForDate({ variables: { date } });
+    await findOffersForDate({ variables: { date } });
   };
 
   return (
-    <div className="max-w-md mx-auto p-8 bg-white shadow-lg rounded-lg">
-      <h1 className="text-2xl font-bold mb-4">Find offers valid until a certain date</h1>
+    <div className="max-w-md p-8 mx-auto bg-white rounded-lg shadow-lg">
+      <h1 className="mb-4 text-2xl font-bold">Find offers valid until a certain date</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="date">
+          <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="date">
             Date
           </label>
           <input
             type="date"
             id="date"
             data-testid="date"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             value={date}
             onChange={(e) => setDate(e.target.value)}
           />
@@ -74,7 +74,7 @@ const FindOffersForDate = () => {
       {offers && offers.map((offer, index) => {
         return (
           <div key={index} className="mt-8">
-            <div className="p-4 border rounded-lg bg-gray-50 shadow-sm">
+            <div className="p-4 border rounded-lg shadow-sm bg-gray-50">
               <p><strong>Offer code:</strong> {offer.offerCode}</p>
               <p><strong>Valid Until:</strong> {new Date(offer.validUntil).toLocaleDateString()}</p>
             </div>

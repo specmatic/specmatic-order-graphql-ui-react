@@ -3,19 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@apollo/client": "^3.11.1",
-    "@testing-library/jest-dom": "^6.4.8",
-    "@testing-library/react": "^16.0.0",
-    "@testing-library/user-event": "^14.5.2",
-    "axios": "^1.7.2",
-    "cross-env": "^7.0.3",
-    "graphql": "^16.9.0",
-    "graphql-http": "^1.22.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "@apollo/client": "^4.0.9",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "axios": "^1.13.2",
+    "cross-env": "^10.1.0",
+    "graphql": "^16.12.0",
+    "graphql-http": "^1.22.4",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-scripts": "^5.0.1",
-    "react-toastify": "^10.0.5",
-    "web-vitals": "^4.2.2"
+    "react-toastify": "^11.0.5",
+    "web-vitals": "^5.1.0"
   },
   "specmatic": {
     "logLevel": "debug"
@@ -48,10 +48,10 @@
     ]
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.39",
-    "tailwindcss": "^3.4.3",
     "@types/jest": "^30.0.0",
-    "testcontainers": "^11.7.0"
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.16",
+    "testcontainers": "^11.8.0"
   }
 }

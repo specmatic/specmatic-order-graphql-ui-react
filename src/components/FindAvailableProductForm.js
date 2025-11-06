@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { useLazyQuery, gql } from '@apollo/client';
+import { useState, useEffect } from 'react';
+import { gql } from '@apollo/client';
+import { useLazyQuery } from "@apollo/client/react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -7,7 +8,6 @@ const FindAvailableProductForm = () => {
   const [type, setType] = useState('gadget');
   const [pageSize, setPageSize] = useState('');
   const [products, setProducts] = useState(null);
-  const [areProductsQueried, setAreProductsQueried] = useState(false);
   
   const FIND_AVAILABLE_PRODUCTS = gql`
     query FindAvailableProducts($type: ProductType!, $pageSize: Int!) {
@@ -20,21 +20,19 @@ const FindAvailableProductForm = () => {
     }
   `;
 
-  const [findAvailableProducts, { loading }] = useLazyQuery(FIND_AVAILABLE_PRODUCTS, {
-    fetchPolicy: 'network-only',
-    onCompleted: (data) => {
-      if(!areProductsQueried) setAreProductsQueried(true);
-      if(!data.findAvailableProducts) {
-        setProducts([]);
-      } else {
-        setProducts(data.findAvailableProducts);
-      }
-    },
-    onError: () => {
-      toast.dismiss();
-      toast.error('Encountered error executing the findAvailableProducts query');
-    },
-  });
+  const [findAvailableProducts, { loading, data, error }] = useLazyQuery(FIND_AVAILABLE_PRODUCTS, {fetchPolicy: 'network-only'});
+
+  useEffect(() => {
+    const products = data?.findAvailableProducts || [];
+    setProducts(products);
+  }, [data]);
+
+  useEffect(() => {
+    if (!error) return;
+    setProducts(null);
+    toast.error('Encountered error executing the findAvailableProducts query');
+    return () => toast.dismiss();
+  }, [error]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,17 +59,17 @@ const FindAvailableProductForm = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto p-8 bg-white shadow-lg rounded-lg">
-      <h1 className="text-2xl font-bold mb-4">Find Available Products</h1>
+    <div className="max-w-md p-8 mx-auto bg-white rounded-lg shadow-lg">
+      <h1 className="mb-4 text-2xl font-bold">Find Available Products</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="type">
+          <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="type">
             Type
           </label>
           <select
             id="type"
             data-testid="type"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             value={type}
             onChange={(e) => setType(e.target.value)}
           >
@@ -82,14 +80,14 @@ const FindAvailableProductForm = () => {
           </select>
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="pageSize">
+          <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="pageSize">
             Page Size
           </label>
           <input
             type="number"
             id="pageSize"
             data-testid="pageSize"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             value={pageSize}
             onChange={(e) => setPageSize(e.target.value)}
           />
@@ -106,24 +104,24 @@ const FindAvailableProductForm = () => {
         </div>
       </form>
 
-      {areProductsQueried && !isProductsValid() && 
+      {loading && !isProductsValid() && 
           <div
-            className="mt-8 p-4 border rounded-lg bg-gray-50 shadow-sm"
+            className="p-4 mt-8 border rounded-lg shadow-sm bg-gray-50"
             data-testid="product"
           >
             <p>No products found</p>
           </div>
       }
-      {areProductsQueried && isProductsValid() && (
+      {loading && isProductsValid() && (
         <div className="mt-8">
-          <h2 className="text-xl font-bold mb-4">Available Products</h2>
+          <h2 className="mb-4 text-xl font-bold">Available Products</h2>
           <div className="grid grid-cols-1 gap-4">
             {products.map((product) => {
               if(!product) return <></>;
               return (
                 <div
                   key={product.id}
-                  className="p-4 border rounded-lg bg-gray-50 shadow-sm"
+                  className="p-4 border rounded-lg shadow-sm bg-gray-50"
                   data-testid="product"
                 >
                   <p><strong>ID:</strong> {product.id}</p>
