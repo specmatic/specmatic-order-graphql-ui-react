@@ -18,14 +18,13 @@ global.setImmediate = global.setImmediate || ((fn, ...args) => global.setTimeout
 let graphQLContainer;
 
 beforeAll(async () => {
-  graphQLContainer = await new GenericContainer("specmatic/specmatic-graphql")
+  graphQLContainer = await new GenericContainer("specmatic/enterprise")
+    .withName("graphql-mock-server")
     .withBindMounts([
-      { source: path.resolve("specmatic.yml"), target: "/usr/src/app/specmatic.yml" },
-      { source: path.resolve("graphql_examples"), target: "/usr/src/app/examples" },
-      { source: path.resolve("build/reports/specmatic"), target: "/usr/src/app/build/reports/specmatic" }
+      { source: path.resolve("."), target: "/usr/src/app" },
     ])
-    .withCommand(["virtualize", "--port", "8080", "--examples", "/usr/src/app/examples"])
-    .withExposedPorts({ host: 8080, container: 8080 })
+    .withCommand(["mock"])
+    .withNetworkMode("host")
     .withLogConsumer(stream => {
       stream.on("data", process.stdout.write.bind(process.stdout));
       stream.on("err", process.stderr.write.bind(process.stderr));
@@ -51,7 +50,6 @@ describe("App component tests", () => {
     const ALLOWED_WAIT_TIME_FOR_RESPONSE = 7000;
 
     await React.act(async () => {
-      // Use act from @testing-library/react
       render(
         <ApolloProvider client={client}>
           <ProductForm />

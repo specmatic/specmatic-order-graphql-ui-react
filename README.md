@@ -57,7 +57,7 @@ curl -X POST http://localhost:8080/graphql ^
   -d "{\"query\": \"query { findAvailableProducts(type: gadget, pageSize: 10) { id name inventory type } }\"}"
 ```
 
-1. Query with variables 
+1. Query with variables
 - On Unix terminals:<br/>
 ```shell
 curl -X POST http://localhost:8080/graphql \
@@ -102,4 +102,4 @@ This should automatically start the application and pull it up in your browser.
 ### Explore the GraphQl spec using GraphiQL
 
 You can now open [GraphiQL](http://localhost:8080/_specmatic/graphiql) in your browser and test out some GraphQL queries.
-This instance of GraphiQL is served by the Specmatic-GraphQL mock instance running on http://localhost:8080
+This instance of GraphiQL is served by Specmatic Enterprise's mock instance running on http://localhost:8080

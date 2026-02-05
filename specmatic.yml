@@ -3,4 +3,9 @@ contracts:
 - git:
     url: "https://github.com/specmatic/specmatic-order-contracts.git"
   consumes:
-  - "io/specmatic/examples/store/graphql/products_bff.graphqls"
+    - specs:
+        - "io/specmatic/examples/store/graphql/products_bff.graphqls"
+      specType: graphqlsdl
+      config:
+        host: localhost
+        port: 8080
