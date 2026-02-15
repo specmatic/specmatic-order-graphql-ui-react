@@ -149,7 +149,7 @@ afterAll(async () => {
   console.log("Stopping GraphQL Mock server");
   await graphQLContainer?.stop({
     timeout: 60_000,   // give Specmatic time to generate reports
-    remove: true       // optional; default behavior depends on your config
+    remove: true 
   });
   console.log("GraphQL Mock stopped");
 }, 120_000);
