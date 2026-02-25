@@ -21,13 +21,13 @@ npm test
 
 ## Bringing up the React application independently with Specmatic GraphQL Stub
 
-### Start up the Specmatic stub
+### Start up the specmatic mock
 
 ```shell
 npm run specmatic:stub
 ```
 
-### Testing the Specmatic stub
+### Testing the specmatic mock
 
 Use the following curl commands to test if the stub is working as expected -
 
