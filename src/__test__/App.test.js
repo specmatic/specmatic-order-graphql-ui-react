@@ -30,7 +30,7 @@ beforeAll(async () => {
       stream.on("err", process.stderr.write.bind(process.stderr));
       stream.on("end", () => process.stdout.write("GraphQL mock stopped"));
     })
-    .withWaitStrategy(Wait.forLogMessage(/Stub server is running/i))
+    .withWaitStrategy(Wait.forLogMessage(/Mock server is running/i))
     .start();
 }, 20000);
 
