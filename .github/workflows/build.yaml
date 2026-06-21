@@ -1,10 +1,18 @@
 name: Run tests
 
+run-name: ${{ inputs.orchestrator_run_suffix && format('Run tests - {0}', inputs.orchestrator_run_suffix) || github.workflow }}
+
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      orchestrator_run_suffix:
+        description: Test orchestrator run suffix
+        required: false
+        type: string
 jobs:
   test:
     strategy:
@@ -18,4 +26,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
+      # Internal setup required by Specmatic. Sample project users can ignore this block.
+      - if: ${{ inputs.orchestrator_run_suffix != '' }}
+        uses: specmatic/specmatic-github-workflows/action-orchestrator-setup@main
+        with:
+          orchestrator-run-suffix: ${{ inputs.orchestrator_run_suffix }}
+          docker-hub-username: ${{ vars.SPECMATIC_DOCKER_HUB_USERNAME }}
+          docker-hub-token: ${{ secrets.SPECMATIC_DOCKER_HUB_TOKEN }}
+      # End: internal setup required by Specmatic.
       - run: npm run test-ci
