@@ -53,10 +53,7 @@ const FindAvailableProductForm = () => {
     });
   };
 
-  const isProductsValid = () => {
-    if(!products || products.every(product => !product)) return false;
-    return true;
-  }
+  const isProductsValid = () => products?.some(Boolean);
 
   return (
     <div className="max-w-md p-8 mx-auto bg-white rounded-lg shadow-lg">
@@ -104,15 +101,15 @@ const FindAvailableProductForm = () => {
         </div>
       </form>
 
-      {loading && !isProductsValid() && 
-          <div
-            className="p-4 mt-8 border rounded-lg shadow-sm bg-gray-50"
-            data-testid="product"
-          >
-            <p>No products found</p>
-          </div>
-      }
-      {loading && isProductsValid() && (
+      {products !== null && !isProductsValid() && (
+        <div
+          className="p-4 mt-8 border rounded-lg shadow-sm bg-gray-50"
+          data-testid="product"
+        >
+          <p>No products found</p>
+        </div>
+      )}
+      {products !== null && isProductsValid() && (
         <div className="mt-8">
           <h2 className="mb-4 text-xl font-bold">Available Products</h2>
           <div className="grid grid-cols-1 gap-4">
@@ -139,4 +136,3 @@ const FindAvailableProductForm = () => {
 };
 
 export default FindAvailableProductForm;
-
