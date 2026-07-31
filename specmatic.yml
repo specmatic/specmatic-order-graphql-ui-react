@@ -11,22 +11,21 @@ dependencies:
           $ref: '#/components/runOptions/productSearchBffGraphQLV4Mock'
 components:
   sources:
-    specmaticOrderContracts:
-      git:
-        url: 'https://github.com/specmatic/specmatic-order-contracts.git'
+    bffSchema:
+      filesystem:
+        directory: './contracts'
   services:
     productSearchBffGraphQLV4:
       description: Product Search BFF GraphQL V4
       definitions:
         - definition:
             source:
-              $ref: "#/components/sources/specmaticOrderContracts"
+              $ref: "#/components/sources/bffSchema"
             specs:
-              - io/specmatic/examples/store/graphql/products_bff.graphqls
+              - products_bff.graphqls
   runOptions:
     productSearchBffGraphQLV4Mock:
       graphqlsdl:
         type: mock
         host: localhost
         port: 8080
-

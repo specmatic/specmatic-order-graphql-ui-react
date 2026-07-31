@@ -34,12 +34,9 @@ const ProductForm = () => {
       setInventory('');
       setType('gadget');
     },
-    onError: () => {
+    onError: (error) => {
       toast.dismiss();
-      toast.success('Product added successfully');
-      setName('');
-      setInventory('');
-      setType('gadget');
+      toast.error(error.message);
     },
   });
 
@@ -124,4 +121,3 @@ const ProductForm = () => {
 };
 
 export default ProductForm;
-
