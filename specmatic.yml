@@ -11,18 +11,19 @@ dependencies:
           $ref: '#/components/runOptions/productSearchBffGraphQLV4Mock'
 components:
   sources:
-    bffSchema:
-      filesystem:
-        directory: './contracts'
+    specmaticOrderContracts:
+      git:
+        url: 'https://github.com/specmatic/specmatic-order-contracts.git'
+        branch: apidays/03-shared-contract-baseline
   services:
     productSearchBffGraphQLV4:
       description: Product Search BFF GraphQL V4
       definitions:
         - definition:
             source:
-              $ref: "#/components/sources/bffSchema"
+              $ref: "#/components/sources/specmaticOrderContracts"
             specs:
-              - products_bff.graphqls
+              - io/specmatic/examples/store/graphql/products_bff.graphqls
   runOptions:
     productSearchBffGraphQLV4Mock:
       graphqlsdl:

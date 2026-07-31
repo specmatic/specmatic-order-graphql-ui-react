@@ -83,6 +83,25 @@ describe("App component tests", () => {
     expect(typeInput.value).toBe("gadget");
   });
 
+  test("requires food products", async () => {
+    await React.act(async () => {
+      render(
+        <ApolloProvider client={client}>
+          <ProductForm />
+        </ApolloProvider>
+      );
+    });
+
+    fireEvent.change(screen.getByTestId("name"), { target: { value: "Noodles" } });
+    fireEvent.change(screen.getByTestId("inventory"), { target: { value: "10" } });
+    fireEvent.change(screen.getByTestId("type"), { target: { value: "food" } });
+    fireEvent.click(screen.getByTestId("submit"));
+
+    await waitFor(() => {
+      expect(toast.success).toHaveBeenCalledWith("Product added successfully");
+    });
+  });
+
   test("should fetch available products", async () => {
     render(
       <ApolloProvider client={client}>
