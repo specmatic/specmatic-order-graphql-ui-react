@@ -16,7 +16,7 @@
     "react-scripts": "^5.0.1",
     "react-toastify": "^11.0.5",
     "tailwindcss": "^3.4.19",
-    "web-vitals": "^5.1.0"
+    "web-vitals": "^6.0.0"
   },
   "specmatic": {
     "logLevel": "debug"
